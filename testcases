@@ -1,0 +1,158 @@
+                                                TEST ANALYSIS
+                                                
+                                               
+ Business Scope :
+ The website is intended to keep track of different items the shop has for sale. It will allow the user to add a new item to
+ the inventory as well as see the list of all the items in the inventory. The user should be able to remove any item from 
+ this list. Once the user clicks on any item in the list, a new page should open up displaying the details of the item-
+ name  , price , description and photo(if possible).
+ 
+ Technical Scope : 
+   Frontend Scope : 
+     Need to create a web page having a component at the top to add a new item to the inventory. Component should include          
+     name,price,description and a button to upload a picture of the item.
+     The page should also display the list of items present in the inventory, below the component that adds a new item.
+     Once the user clicks on an item , he/she should be redirected to a new page which will display all the information of the     
+     item.
+     Need to create a button to remove any item from the list.
+     Need to create a scroll bar to see the list till the bottom.
+     Content of both the pages should be horizontally and vertically centered.
+     
+ Backend Scope :
+     Need to integrate REST APIs with the frontend which will post and fetch data from an SQL database to maintain the             
+     persistence of data on the website.
+     Need to maintain Messaging Queues to keep the API calls asynchronous for quick and smooth response from backend.
+     Four REST APIs are required in current scope : 
+                addItem- this api will be triggered when user fills the information on add item compoenent and clicks on                       
+                submit.
+                queryItem- this api will be triggered when user click on any item in the list and is redirected to the new                     
+                page of information.
+                queryList - this api will have pageNum and pageSize as request paramaters which will get the data to be shown                 
+                in the item list
+                removeItem- this api will take itemId in request payload and remove its entry from the DB.
+ 
+ 
+ 
+ Functional Test Analysis :
+ The functional test analysis include frontend as well backend Test Case coverage.
+    Frontend Test Cases : 
+        Usability of the website :
+                Page content should be grammatically correct.
+                All the fonts should be same as per the requirement.
+                All the fields on both the pages should be horizontally and vertically centered.
+                All the error messages should be correct and should match with the field label.
+                All the buttons should be in a standard format and size.
+                Home link should be there on the second page.
+                Need to check for broken links and images.
+                Confirmation message should be displayed for remove operation of the items.
+                Need to check the site on different resolutions (640 x 480, 600x800 etc).
+                Scroll bar should appear only if required.
+                If there is an error message on submit, the information filled by the user should be there.
+                user should be able to perform the operations by using keyboard on all the tabs.
+                Need to check if the uploaded picture of the item is clearly visible in all resolutions.
+                
+       Functionality of the website       
+                Asterisk sign should be displayed for all the mandatory fields.
+                System should not display the error message for optional fields.
+                Test the price field should not accept the alphabets and proper error message should display.
+                Test for negative numbers is allowed for price field.
+                Test the max length of every field to ensure the data is not truncated.
+                Test the Java script is properly working in different browsers.
+                Check that the item list is being sorted based on the requirements.
+                Check how the site behaves when cookies are deleted while in the site and after visiting the site.
+                Test the timeout functionality of the page when backend fails to respond within the SLA defined.
+                Test the website on different internet speeds.
+                Check that once the user adds an item, the item should be visible in the list when the page is refreshed.
+                Check that once the user removes an item from the list, it should not be visible in the list when page is                     
+                refreshed.
+                Check the pagination of the page if the list has a lot of records.
+                Check that the pagesize is as per the requirements.
+                Check that the session is maintained when the user is redirected to the new page of item description.
+                Check that the session is maintained when user moves to and fro on both pages.
+                Verify if the user is logged out from the system or user session was expired, the user should not be able to                  
+                navigate the site.
+                Verify if, any functionality is not working, the system should not display any application, server, or                         
+                database information. Instead, it should display the custom error page.
+                Test the HTML version being used is compatible with appropriate browser versions.
+                Verify that the picture of the item can only be uploaded in a predefined format and size.
+                
+     
+     Backend Test Cases :
+               Verify that when the user clicks on ADD item ,  POST API call of addItem is made from the website with the                    
+               payload including all important params i.e. name , price and description. API should work in an asynchronous                  
+               manner and return an ACCEPTED_SUCCESS repsonse along with a unique ID in its response.
+               The API should then publish a message in a topic and release the current thread.
+               This message will be consumed by another topic at a later time which will validate the API call made and create                
+               a DB entry in a table having the newly generated ID as the primary key.
+               Verify the idempotency check of addItem API when it is hit with same request ID param.
+               Check the API response when the server is down.
+               verify queryItem API with an itemId sent in the request and assert that correct information is fetched from the                
+               db table in response.
+               hit queryItemAPI for an itemID not present in the DB and check that it throws an error.
+               hit queryItemAPI for an itemID immediately after it created through addItem API. It may or may not return the                  
+               item info as the addItem API is asynchronous and the entry may not be added in the DB till that time. 
+               hit queryList API with different values in pageNum and pageSize and verify the response from the DB.
+               hit queryList API with pageNum and pageSize values more than the max value defined in the requirement and check                
+               that the API fails with a proper message.
+               Disable the messaging topic and hit addItem API. check that API responds the same way but error is printed in                  
+               the logs showing that message was not published.
+               Verify that all the entries in the log files are clear and apt. No unncessary logging should be happening as                  
+               this will overload the server at some point.
+               verify removeItem API with a valid itemId and check that the entry is deleted from the DB. This will also be an                
+               asyncronous hit and a message will be published in the topic which will be consumed later and the entry will be                
+               removed from the DB.
+               verify removeItem API with an itemID not present in the DB.
+               Verify the max size of the coloums of DB so that DB exeption is thrown when an entry is made having size more                  
+               than that of the coloums of DB.
+               
+               
+        
+     Automation Test Cases : 
+     
+               Frontend Test Cases : 
+                        Test cases can be easily automated through Selenium.
+                         Need to check for broken links and images.
+                         user should be able to perform the operations by using keyboard on all the tabs.
+                         Asterisk sign should be displayed for all the mandatory fields.
+                         Test the price field should not accept the alphabets and proper error message should display.
+                         Test for negative numbers is allowed for price field.
+                         Test the max length of every field to ensure the data is not truncated.
+                         Check that once the user adds an item, the item should be visible in the list when the page is                                
+                         refreshed.
+                         Check that once the user removes an item from the list, it should not be visible in the list when                              
+                         page is refreshed.
+                         Check the pagination of the page if the list has a lot of records.
+                         
+              Backend Test Cases : 
+                         Rest APIs can be automated easily through Rest Assured using POJO classes.
+                         Request Validations of all the APIs.
+                         addItem business flow can be fully automated till the assertions of DB entries being made                                      
+                         successfully.
+                         Verify the idempotency check of addItem API when it is hit with same request ID param.
+                         queryItem business flow can be fully automated till the assertions of DB entries being fetched.
+                         hit queryItemAPI for an itemID not present in the DB and check that it throws an error.
+                         hit queryItemAPI for an itemID immediately after it created through addItem API.
+                         hit queryList API with different values in pageNum and pageSize and verify the response from the DB.
+                         hit queryList API with pageNum and pageSize values more than the max value defined in the requirement                         
+                         and check that the API fails with a proper message.
+                         verify removeItem API with a valid itemId and check that the entry is deleted from the DB. 
+                         verify removeItem API with an itemID not present in the DB.
+                         Verify the max size of the coloums of DB
+                         
+                         
+              
+                     
+
+                           
+               
+               
+               
+                
+                
+                
+                
+ 
+ 
+ 
+ 
+ 
